@@ -8,10 +8,12 @@
 #    Login to Docker Hub: This step logs in to Docker Hub using your Docker Hub username and password.
 #    Push to Docker Hub: This step pushes the Docker image to Docker Hub.
 name: Build & Deploy Spring boot Just Smile
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-deploy:
     name: build and deploy first job
@@ -37,21 +39,13 @@ jobs:
         id: tag
         run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:${{ env.tag }}
-
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Push Docker Image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
           context: .
