@@ -7,7 +7,7 @@
 #    Build Docker Image: This step builds a Docker image for your microservice. The Docker image is tagged with the tag generated in the previous step.
 #    Login to Docker Hub: This step logs in to Docker Hub using your Docker Hub username and password.
 #    Push to Docker Hub: This step pushes the Docker image to Docker Hub.
-name: Build & Deploy Spring boot Just Smile
+name: Build & Deploy Spring Boot Just Smile
 
 on:
   push:
@@ -28,8 +28,6 @@ jobs:
           distribution: 'corretto'
           java-version: 17
 
-      # Removed Unit Tests step
-
       - name: Build the application
         run: |
           mvn clean
@@ -38,7 +36,7 @@ jobs:
       - name: Generate Docker Tag
         id: tag
         run: |
-          echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+          echo "tag=${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -52,4 +50,4 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:${{ env.tag }}
+          tags: ${{ env.tag }}
