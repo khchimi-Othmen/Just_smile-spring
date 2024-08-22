@@ -1,50 +1,44 @@
-name: Build & Deploy Just Smile
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-deploy:
-    name: Build and Deploy Just Smile
+  build:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup JDK 17
+      # Step 2: Set up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: 17
+          java-version: '17'
 
-      - name: Unit Tests
-        run: mvn -B test --file pom.xml
+      # Step 3: Build the application
+      - name: Build with Maven
+        run: mvn clean install
 
-      - name: Build the application
-        run: |
-          mvn clean
-          mvn -B package --file pom.xml
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: docker build -t just_smile:latest .
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:today
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      # Step 5: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:today
+      # Step 6: Push Docker image to Docker Hub
+      - name: Push Docker image
+        run: docker push just_smile:latest
