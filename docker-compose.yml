@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: just_smile_postgres
+    environment:
+      POSTGRES_DB: just_smile
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ho92
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  springapp:
+    image: khchimiothmen/just_smile:latest  # Assurez-vous que cette image est construite et poussée
+    container_name: just_smile_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/just_smile
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ho92
+    ports:
+      - "8088:8088"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
