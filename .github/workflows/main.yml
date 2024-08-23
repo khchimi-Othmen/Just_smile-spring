@@ -1,4 +1,4 @@
-name: CI/CD Pipeline Just Smaile
+name: CI/CD Pipeline Just Smile
 
 on:
   push:
@@ -8,15 +8,12 @@ on:
     branches:
       - main
 
-env:
-  DOCKER_IMAGE_NAME: khchimiothmen/just_smile
-
 jobs:
-  build:
-    name: Build Job
+  build-deploy:
+    name: build and deploy first job
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
           node-version: '16'
@@ -28,41 +25,11 @@ jobs:
           java-version: 17
           node-version: '16'
 
-      - name: Cache Maven Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build the Application
+      - name: Build the application
         run: |
           mvn clean
           mvn -B package --file pom.xml
 
-      - name: Archive Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: java-app-artifact
-          path: target/*.jar
-
-  docker-build:
-    name: Docker Build and Push
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          node-version: '16'
-
-      - name: Restore Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: java-app-artifact
-
-      # Step to generate a Docker tag based on the current timestamp
       - name: Generate Docker Tag
         id: tag
         run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
@@ -75,19 +42,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          node-version: '16'
 
       - name: Push Docker image to Docker Hub
         run: docker push khchimiothmen/just_smile:${{ env.tag }}
-
-  notify:
-    name: Notification
-    runs-on: ubuntu-latest
-    needs: docker-build
-    steps:
-      - name: Notify on Success
-        if: success()
-        run: echo "Build and Deployment successful for ${{ env.DOCKER_IMAGE_NAME }}:${{ env.tag }}"
-
-      - name: Notify on Failure
-        if: failure()
-        run: echo "Build or Deployment failed."
