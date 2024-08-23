@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Just Smile
+name: CI/CD Pipeline Just Smile
 
 on:
   push:
@@ -9,47 +9,47 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build Application
+  build-deploy:
+    name: Build and Deploy Job
     runs-on: ubuntu-latest
     steps:
+      # Checkout code from repository
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          node-version: '16'
 
-      - name: Set up JDK 17
+      # Set up Java Development Kit (JDK) 17
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
           java-version: 17
+          node-version: '16'
 
-      - name: Build the application using Maven
+      # Build the application using Maven
+      - name: Build the application
         run: |
           mvn clean
           mvn -B package --file pom.xml
 
-  docker:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
+      # Generate a Docker tag based on the current date and time
       - name: Generate Docker Tag
         id: tag
-        run: echo "TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
+      # Build the Docker image using the generated tag
       - name: Build Docker image
-        run: docker build -t khchimiothmen/just_smile:${{ env.TAG }} .
+        run: docker build -t khchimiothmen/just_smile:${{ env.tag }} .
 
+      # Log in to Docker Hub using credentials from secrets
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          node-version: '16'
 
+      # Push the Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
-        run: docker push khchimiothmen/just_smile:${{ env.TAG }}
+        run: docker push khchimiothmen/just_smile:${{ env.tag }}
