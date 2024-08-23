@@ -11,4 +11,4 @@ COPY target/just_smile-0.0.1-SNAPSHOT.jar /app/just_smile.jar
 EXPOSE 8088
 
 # Command to run your Spring Boot application
-CMD ["java", "-jar", "ms-bank_branch.jar"]
+CMD ["java", "-jar", "just_smile.jar"]
