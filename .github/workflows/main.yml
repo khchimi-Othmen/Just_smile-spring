@@ -25,11 +25,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      # Step to generate a Docker tag based on the current timestamp
+      - name: Generate Docker Tag
+        id: tag
+        run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
       - name: Build Docker image
-        run: |
-          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/just_smile
-          TAG_NAME=laatest
-          docker build -t $IMAGE_NAME:$TAG_NAME .
+        run: docker build -t khchimiothmen/just_smile:${{ env.tag }} .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -38,7 +40,4 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Push Docker image to Docker Hub
-        run: |
-          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/just_smile
-          TAG_NAME=laatest
-          docker push $IMAGE_NAME:$TAG_NAME
+        run: docker push khchimiothmen/just_smile:${{ env.tag }}
