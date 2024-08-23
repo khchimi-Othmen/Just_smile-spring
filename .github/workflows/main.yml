@@ -26,7 +26,10 @@ jobs:
         run: mvn clean install
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:lateest .
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/just_smile
+          TAG_NAME=laatest
+          docker build -t $IMAGE_NAME:$TAG_NAME .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -35,4 +38,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/just_smile:lateest
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/just_smile
+          TAG_NAME=laatest
+          docker push $IMAGE_NAME:$TAG_NAME
