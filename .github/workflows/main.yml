@@ -16,8 +16,7 @@ jobs:
       # Checkout code from repository
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          node-version: '16'
+
 
       # Set up Java Development Kit (JDK) 17
       - name: Setup JDK 17
@@ -25,7 +24,7 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: 17
-          node-version: '16'
+
 
       # Build the application using Maven
       - name: Build the application
@@ -48,7 +47,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          node-version: '16'
 
       # Push the Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
