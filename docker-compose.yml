@@ -2,7 +2,7 @@ version: '3.8'  # Make sure to specify a version
 
 services:
   app:
-    image: khchimiothmen/just_smile:latest
+    image: khchimiothmen/just_smile:latestt
     container_name: just_smile_app
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/just_smile
