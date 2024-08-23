@@ -104,6 +104,7 @@ public class AppointmentController {
     public ResponseEntity<List<Appointment>> getAppointmentsByDate(@RequestParam String date) {
         try {
             Date selectedDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            System.out.println("Received date: " + selectedDate); // Log the date received
             List<Appointment> appointments = appointmentService.findAppointmentsByDate(selectedDate);
             return new ResponseEntity<>(appointments, HttpStatus.OK);
         } catch (ParseException e) {

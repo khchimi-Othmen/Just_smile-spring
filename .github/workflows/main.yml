@@ -39,7 +39,7 @@ jobs:
 
       # Build the Docker image using the generated tag
       - name: Build Docker image
-        run: docker build -t khchimiothmen/just_smile:latest .
+        run: docker build -t khchimiothmen/just_smile:latestt .
 
       # Log in to Docker Hub using credentials from secrets
       - name: Log in to Docker Hub
@@ -50,4 +50,4 @@ jobs:
 
       # Push the Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
-        run: docker push khchimiothmen/just_smile:latest
+        run: docker push khchimiothmen/just_smile:latestt

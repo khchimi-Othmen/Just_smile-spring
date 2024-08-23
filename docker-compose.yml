@@ -1,29 +1,39 @@
-version: '3.8'
+version: '3.8'  # Make sure to specify a version
 
 services:
-  postgres:
+  app:
+    image: khchimiothmen/just_smile:latest
+    container_name: just_smile_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/just_smile
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ho92
+      TZ: Africa/Tunis
+    ports:
+      - "8088:8088"
+    depends_on:
+      - db
+
+  db:
     image: postgres:14
-    container_name: just_smile_postgres
+    container_name: postgres_db
     environment:
       POSTGRES_DB: just_smile
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ho92
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  springapp:
-    image: khchimiothmen/just_smile:latest  # Assurez-vous que cette image est construite et poussée
-    container_name: just_smile_app
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/just_smile
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ho92
     ports:
-      - "8088:8088"
+      - "5432:5432" # Optional: expose port 5432 if needed outside Docker
+
+  # New service for the Angular application
+  angular:
+    image: khchimiothmen/just_smile_angular:second
+    container_name: just_smile_angular
+    ports:
+      - "80:80"  # Map port 80 on the host to port 80 in the container
     depends_on:
-      - postgres
+      - app  # Optional: Only if the Angular app needs to wait for backend API to be up
 
 volumes:
   postgres_data:
