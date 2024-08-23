@@ -62,22 +62,22 @@ jobs:
         with:
           name: java-app-artifact
 
+      # Step to generate a Docker tag based on the current timestamp
       - name: Generate Docker Tag
         id: tag
         run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
-      - name: Build Docker Image
-        run: docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ env.tag }} .
+      - name: Build Docker image
+        run: docker build -t khchimiothmen/just_smile:${{ env.tag }} .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          node-version: '16'
 
-      - name: Push Docker Image to Docker Hub
-        run: docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ env.tag }}
+      - name: Push Docker image to Docker Hub
+        run: docker push khchimiothmen/just_smile:${{ env.tag }}
 
   notify:
     name: Notification
