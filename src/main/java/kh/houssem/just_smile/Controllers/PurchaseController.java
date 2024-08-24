@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://192.168.1.25:80")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/purchases")
 public class PurchaseController {

@@ -28,7 +28,7 @@ services:
 
   # New service for the Angular application
   angular:
-    image: khchimiothmen/just_smile_angular:prolatest
+    image: khchimiothmen/just_smile_angular:proflatest
     container_name: just_smile_angular
     ports:
       - "80:80"  # Map port 80 on the host to port 80 in the container
