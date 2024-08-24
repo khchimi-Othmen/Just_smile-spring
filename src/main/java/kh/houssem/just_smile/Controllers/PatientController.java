@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://192.168.1.25:80")
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
